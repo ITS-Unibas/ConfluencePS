@@ -1,4 +1,4 @@
-function Get-User {
+function Get-ConfluenceUser {
     [CmdletBinding(SupportsPaging)]
     [OutputType([ConfluencePS.User])]
     param (

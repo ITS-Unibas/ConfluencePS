@@ -1,4 +1,4 @@
-function Remove-Space {
+function Remove-ConfluenceSpace {
     [CmdletBinding(
         ConfirmImpact = 'High',
         SupportsShouldProcess = $true

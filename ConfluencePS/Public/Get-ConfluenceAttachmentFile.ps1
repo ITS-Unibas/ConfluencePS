@@ -1,4 +1,4 @@
-function Get-AttachmentFile {
+function Get-ConfluenceAttachmentFile {
     [CmdletBinding()]
     [OutputType([Bool])]
     param (
@@ -31,8 +31,7 @@ function Get-AttachmentFile {
                     )
                     $errorItem.ErrorDetails = "Invalid path '$_'."
                     $PSCmdlet.ThrowTerminatingError($errorItem)
-                }
-                else {
+                } else {
                     return $true
                 }
             }
@@ -59,8 +58,8 @@ function Get-AttachmentFile {
 
         foreach ($_Attachment in $Attachment) {
             $iwParameters['Uri'] = $_Attachment.URL
-            $iwParameters['Headers'] = @{"Accept" = $_Attachment.MediaType}
-            $iwParameters['OutFile'] = if ($Path) {Join-Path -Path $Path -ChildPath $_Attachment.Filename} else {$_Attachment.Filename}
+            $iwParameters['Headers'] = @{"Accept" = $_Attachment.MediaType }
+            $iwParameters['OutFile'] = if ($Path) { Join-Path -Path $Path -ChildPath $_Attachment.Filename } else { $_Attachment.Filename }
 
             $result = Invoke-Method @iwParameters
             (-not $result)

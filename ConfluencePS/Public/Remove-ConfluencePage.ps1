@@ -1,6 +1,9 @@
-function ConvertTo-StorageFormat {
-    [CmdletBinding()]
-    [OutputType([String])]
+function Remove-ConfluencePage {
+    [CmdletBinding(
+        ConfirmImpact = 'Medium',
+        SupportsShouldProcess = $true
+    )]
+    [OutputType([Bool])]
     param (
         [Parameter( Mandatory = $true )]
         [uri]$ApiUri,
@@ -16,31 +19,39 @@ function ConvertTo-StorageFormat {
         [Parameter(
             Position = 0,
             Mandatory = $true,
-            ValueFromPipeline = $true
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true
         )]
-        [string[]]$Content
+        [ValidateRange(1, [int]::MaxValue)]
+        [Alias('ID')]
+        [int[]]$PageID
     )
 
     BEGIN {
         Write-Verbose "[$($MyInvocation.MyCommand.Name)] Function started"
+
+        $resourceApi = "$ApiUri/content/{0}"
     }
 
     PROCESS {
         Write-Debug "[$($MyInvocation.MyCommand.Name)] ParameterSetName: $($PsCmdlet.ParameterSetName)"
         Write-Debug "[$($MyInvocation.MyCommand.Name)] PSBoundParameters: $($PSBoundParameters | Out-String)"
 
+        if (($_) -and -not($_ -is [ConfluencePS.Page] -or $_ -is [int])) {
+            $message = "The Object in the pipe is not a Page."
+            $exception = New-Object -TypeName System.ArgumentException -ArgumentList $message
+            Throw $exception
+        }
+
         $iwParameters = Copy-CommonParameter -InputObject $PSBoundParameters
-        $iwParameters['Uri'] = "$ApiUri/contentbody/convert/storage"
-        $iwParameters['Method'] = 'Post'
+        $iwParameters['Method'] = 'Delete'
 
-        foreach ($_content in $Content) {
-            $iwParameters['Body'] = @{
-                value          = "$_content"
-                representation = 'wiki'
-            } | ConvertTo-Json
+        foreach ($_page in $PageID) {
+            $iwParameters["Uri"] = $resourceApi -f $_page
 
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($_content | Out-String)"
-            (Invoke-Method @iwParameters).value
+            If ($PSCmdlet.ShouldProcess("PageID $_page")) {
+                Invoke-Method @iwParameters
+            }
         }
     }
 

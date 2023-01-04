@@ -1,4 +1,4 @@
-function Set-Label {
+function Set-ConfluenceLabel {
     [CmdletBinding(
         ConfirmImpact = 'Low',
         SupportsShouldProcess = $true
@@ -54,8 +54,7 @@ function Set-Label {
         foreach ($_page in $PageID) {
             if ($_ -is [ConfluencePS.Page]) {
                 $InputObject = $_
-            }
-            else {
+            } else {
                 $InputObject = Get-Page -PageID $_page @authAndApiUri
             }
 
@@ -63,7 +62,7 @@ function Set-Label {
             Remove-Label -PageID $_page @authAndApiUri | Out-Null
 
             $iwParameters["Uri"] = $resourceApi -f $_page
-            $iwParameters["Body"] = $Label | Foreach-Object {@{prefix = 'global'; name = $_}} | ConvertTo-Json
+            $iwParameters["Body"] = $Label | Foreach-Object { @{prefix = 'global'; name = $_ } } | ConvertTo-Json
 
             Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($iwParameters["Body"] | Out-String)"
             if ($PSCmdlet.ShouldProcess("Label $Label, PageID $_page")) {

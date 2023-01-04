@@ -1,9 +1,8 @@
-function Remove-Page {
+function Get-ConfluenceLabel {
     [CmdletBinding(
-        ConfirmImpact = 'Medium',
-        SupportsShouldProcess = $true
+        SupportsPaging = $true
     )]
-    [OutputType([Bool])]
+    [OutputType([ConfluencePS.ContentLabelSet])]
     param (
         [Parameter( Mandatory = $true )]
         [uri]$ApiUri,
@@ -24,13 +23,16 @@ function Remove-Page {
         )]
         [ValidateRange(1, [int]::MaxValue)]
         [Alias('ID')]
-        [int[]]$PageID
+        [int[]]$PageID,
+
+        [ValidateRange(1, [int]::MaxValue)]
+        [int]$PageSize = 25
     )
 
     BEGIN {
         Write-Verbose "[$($MyInvocation.MyCommand.Name)] Function started"
 
-        $resourceApi = "$ApiUri/content/{0}"
+        $resourceApi = "$ApiUri/content/{0}/label"
     }
 
     PROCESS {
@@ -44,14 +46,29 @@ function Remove-Page {
         }
 
         $iwParameters = Copy-CommonParameter -InputObject $PSBoundParameters
-        $iwParameters['Method'] = 'Delete'
+        $iwParameters['Method'] = 'Get'
+        $iwParameters['GetParameters'] = @{
+            limit = $PageSize
+        }
+        $iwParameters['OutputType'] = [ConfluencePS.Label]
+
+        # Paging
+        ($PSCmdlet.PagingParameters | Get-Member -MemberType Property).Name | ForEach-Object {
+            $iwParameters[$_] = $PSCmdlet.PagingParameters.$_
+        }
 
         foreach ($_page in $PageID) {
-            $iwParameters["Uri"] = $resourceApi -f $_page
-
-            If ($PSCmdlet.ShouldProcess("PageID $_page")) {
-                Invoke-Method @iwParameters
+            if ($_ -is [ConfluencePS.Page]) {
+                $InputObject = $_
+            } else {
+                $authAndApiUri = Copy-CommonParameter -InputObject $PSBoundParameters -AdditionalParameter "ApiUri"
+                $InputObject = Get-Page -PageID $_page @authAndApiUri
             }
+            $iwParameters["Uri"] = $resourceApi -f $_page
+            $output = New-Object -TypeName ConfluencePS.ContentLabelSet
+            $output.Page = $InputObject
+            $output.Labels += (Invoke-Method @iwParameters)
+            $output
         }
     }
 

@@ -1,4 +1,4 @@
-function Invoke-Method {
+function Invoke-ConfluenceMethod {
     [CmdletBinding(SupportsPaging = $true)]
     [OutputType(
         [PSObject],

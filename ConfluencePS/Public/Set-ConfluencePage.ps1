@@ -1,4 +1,4 @@
-function Set-Page {
+function Set-ConfluencePage {
     [CmdletBinding(
         ConfirmImpact = 'Medium',
         SupportsShouldProcess = $true,
@@ -111,8 +111,7 @@ function Set-Page {
                 # $Body might be empty
                 if ($PSBoundParameters.Keys -contains "Body") {
                     $Content.body.storage.value = $Body
-                }
-                else {
+                } else {
                     $Content.body.storage.value = $originalPage.Body
                 }
                 # Ancestors is undocumented! May break in the future

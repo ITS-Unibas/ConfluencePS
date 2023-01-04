@@ -1,4 +1,4 @@
-function Set-Info {
+function Set-ConfluenceInfo {
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseShouldProcessForStateChangingFunctions', '')]
     param (

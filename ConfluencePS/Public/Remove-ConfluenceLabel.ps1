@@ -1,4 +1,4 @@
-function Remove-Label {
+function Remove-ConfluenceLabel {
     [CmdletBinding(
         ConfirmImpact = 'Low',
         SupportsShouldProcess = $true

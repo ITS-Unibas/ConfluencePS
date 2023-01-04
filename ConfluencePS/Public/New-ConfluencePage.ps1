@@ -1,4 +1,4 @@
-function New-Page {
+function New-ConfluencePage {
     [CmdletBinding(
         ConfirmImpact = 'Low',
         SupportsShouldProcess = $true,
@@ -70,7 +70,7 @@ function New-Page {
 
         $Content = [PSObject]@{
             type      = "page"
-            space     = [PSObject]@{ key = ""}
+            space     = [PSObject]@{ key = "" }
             title     = ""
             body      = [PSObject]@{
                 storage = [PSObject]@{

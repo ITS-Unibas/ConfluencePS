@@ -1,4 +1,4 @@
-function ConvertTo-Table {
+function ConvertTo-ConfluenceTable {
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssignments', '')]
     param (
@@ -39,7 +39,7 @@ function ConvertTo-Table {
                         $row = ("| {0} | {1} |" -f $_.Name, $_.Value) -replace "\|\s\s", "| "
                         $null = $sb.AppendLine($row)
                     }
-                }else{
+                } else {
                     $_.PSObject.Properties | ForEach-Object {
                         $row = ("|| {0} | {1} |" -f $_.Name, $_.Value) -replace "\|\s\s", "| "
                         $null = $sb.AppendLine($row)
@@ -48,8 +48,7 @@ function ConvertTo-Table {
 
 
                 $Spacer = $true
-            }
-            else {
+            } else {
                 # Horizontal
 
                 # Header row enclosed by '||'

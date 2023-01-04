@@ -1,4 +1,4 @@
-function New-Space {
+function New-ConfluenceSpace {
     [CmdletBinding(
         ConfirmImpact = 'Low',
         SupportsShouldProcess = $true,

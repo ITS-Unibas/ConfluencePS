@@ -1,4 +1,4 @@
-function Add-Label {
+function Add-ConfluenceLabel {
     [CmdletBinding(
         ConfirmImpact = 'Low',
         SupportsShouldProcess = $true
@@ -59,7 +59,7 @@ function Add-Label {
 
         # Test if Label is String[]
         [String[]]$_label = $Label
-        $_label = $_label | Where-Object {$_ -ne "ConfluencePS.Label"}
+        $_label = $_label | Where-Object { $_ -ne "ConfluencePS.Label" }
         if ($_label) {
             [String[]]$Label = $_label
         }
@@ -88,17 +88,15 @@ function Add-Label {
         foreach ($_page in $PageID) {
             if ($_ -is [ConfluencePS.Page]) {
                 $InputObject = $_
-            }
-            elseif ($_ -is [ConfluencePS.ContentLabelSet]) {
+            } elseif ($_ -is [ConfluencePS.ContentLabelSet]) {
                 $InputObject = $_.Page
-            }
-            else {
+            } else {
                 $authAndApiUri = Copy-CommonParameter -InputObject $PSBoundParameters -AdditionalParameter "ApiUri"
                 $InputObject = Get-Page -PageID $_page @authAndApiUri
             }
 
             $iwParameters["Uri"] = $resourceApi -f $_page
-            $iwParameters["Body"] = ($Label | Foreach-Object {@{prefix = 'global'; name = $_}}) | ConvertTo-Json
+            $iwParameters["Body"] = ($Label | Foreach-Object { @{prefix = 'global'; name = $_ } }) | ConvertTo-Json
 
             Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($iwParameters["Body"] | Out-String)"
             if ($PSCmdlet.ShouldProcess("Label $Label, PageID $_page")) {

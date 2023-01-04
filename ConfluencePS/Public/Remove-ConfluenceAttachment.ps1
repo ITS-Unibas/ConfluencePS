@@ -1,4 +1,4 @@
-function Remove-Attachment {
+function Remove-ConfluenceAttachment {
     [CmdletBinding(
         ConfirmImpact = 'Medium',
         SupportsShouldProcess = $true

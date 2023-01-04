@@ -1,4 +1,4 @@
-function Get-Page {
+function Get-ConfluencePage {
     [CmdletBinding(
         SupportsPaging = $true,
         DefaultParameterSetName = "byId"
@@ -119,9 +119,8 @@ function Get-Page {
                 if ($SpaceKey) { $iwParameters["GetParameters"]["spaceKey"] = $SpaceKey }
 
                 if ($Title) {
-                    Invoke-Method @iwParameters | Where-Object {$_.Title -like "$Title"}
-                }
-                else {
+                    Invoke-Method @iwParameters | Where-Object { $_.Title -like "$Title" }
+                } else {
                     Invoke-Method @iwParameters
                 }
                 break
@@ -130,7 +129,7 @@ function Get-Page {
                 $iwParameters["Uri"] = $resourceApi -f "/search"
 
                 $CQLparameters = @("type=page", "label=$Label")
-                if ($SpaceKey) {$CQLparameters += "space=$SpaceKey"}
+                if ($SpaceKey) { $CQLparameters += "space=$SpaceKey" }
                 $cqlQuery = ConvertTo-URLEncoded ($CQLparameters -join (" AND "))
 
                 $iwParameters["GetParameters"]["cql"] = $cqlQuery

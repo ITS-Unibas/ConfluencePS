@@ -1,4 +1,4 @@
-function Get-Space {
+function Get-ConfluenceSpace {
     [CmdletBinding(
         SupportsPaging = $true
     )]
@@ -54,8 +54,7 @@ function Get-Space {
 
                 Invoke-Method @iwParameters
             }
-        }
-        else {
+        } else {
             $iwParameters["Uri"] = $resourceApi -f ""
 
             Invoke-Method @iwParameters

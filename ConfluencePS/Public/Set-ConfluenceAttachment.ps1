@@ -1,4 +1,4 @@
-function Set-Attachment {
+function Set-ConfluenceAttachment {
     [CmdletBinding(
         ConfirmImpact = 'Low',
         SupportsShouldProcess = $true
@@ -36,8 +36,7 @@ function Set-Attachment {
                     )
                     $errorItem.ErrorDetails = "No file could be found with the provided path '$_'."
                     $PSCmdlet.ThrowTerminatingError($errorItem)
-                }
-                else {
+                } else {
                     return $true
                 }
             }
