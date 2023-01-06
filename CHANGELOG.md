@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [3.0.1] 2023-01-06
+
+### Added
+
+- Function 'Get-ConfluenceUser'
+
+### Changed
+
+- Renamed all functions to {Verb}-Confluence{Noun}
+- Introduced 'Uni' prefix
+- Function 'ConvertTo-ConfluenceTable': Improved pipe char handling for vertical tables
+
+### Fixed
+
+- Function 'Get-ConfluencePage': Improved URL handling for API requests 'ByLabel'
 
 ### Changed
 
@@ -184,21 +198,8 @@ If you like drinking from the fire hose, here's [everything we closed for 2.0], 
 No changelog available for version `1.0` of ConfluencePS. `1.0` was created in late 2015. Version `.69` was published to the PowerShell Gallery in Nov 2016, and it remained unchanged until `2.0`. If you're looking for things that changed prior to `2.0`...sorry, but these probably aren't the droids you're looking for. :)
 
 [everything we closed for 2.0]: https://github.com/AtlassianPS/ConfluencePS/issues?utf8=%E2%9C%93&q=closed%3A2017-04-01..2017-08-17
-[@alexsuslin]: https://github.com/alexsuslin
-[@axxelG]: https://github.com/axxelG
-[@beaudryj]: https://github.com/beaudryj
 [@brianbunke]: https://github.com/brianbunke
-[@Clijsters]: https://github.com/Clijsters
-[@colhal]: https://github.com/colhal
-[@Dejulia489]: https://github.com/Dejulia489
-[@ebekker]: https://github.com/ebekker
 [@FelixMelchert]: https://github.com/FelixMelchert
-[@jkknorr]: https://github.com/jkknorr
 [@JohnAdders]: https://github.com/JohnAdders
-[@kittholland]: https://github.com/kittholland
-[@LiamLeane]: https://github.com/LiamLeane
 [@lipkau]: https://github.com/lipkau
-[@lukhase]: https://github.com/lukhase
-[@padgers]: https://github.com/padgers
 [@ritzcrackr]: https://github.com/ritzcrackr
-[@ThePSAdmin]: https://github.com/ThePSAdmin
