@@ -128,7 +128,7 @@ function Get-ConfluencePage {
             "byLabel" {
                 $iwParameters["Uri"] = $resourceApi -f "/search"
 
-                $CQLparameters = @("type=page", "label=$Label")
+                $CQLparameters = @("type=page", "label=`"$Label`"")
                 if ($SpaceKey) { $CQLparameters += "space=$SpaceKey" }
                 $cqlQuery = ConvertTo-URLEncoded ($CQLparameters -join (" AND "))
 
