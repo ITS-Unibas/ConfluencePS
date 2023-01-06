@@ -39,7 +39,6 @@ function Set-ConfluenceInfo {
         }
 
         $moduleCommands = Get-Command -Module ConfluencePS
-
         if ($PromptCredentials) {
             $Credential = (Get-Credential)
         }

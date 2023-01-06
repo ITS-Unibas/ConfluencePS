@@ -40,7 +40,7 @@ function ConvertTo-ConfluenceStorageFormat {
             } | ConvertTo-Json
 
             Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($_content | Out-String)"
-            (Invoke-Method @iwParameters).value
+            (Invoke-ConfluenceMehtod @iwParameters).value
         }
     }
 

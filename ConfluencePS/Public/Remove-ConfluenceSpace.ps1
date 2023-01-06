@@ -60,7 +60,7 @@ function Remove-ConfluenceSpace {
             $iwParameters["Uri"] = $resourceApi -f $_space
 
             If ($PSCmdlet.ShouldProcess("Space key $_space")) {
-                $response = Invoke-Method @iwParameters
+                $response = Invoke-ConfluenceMehtod @iwParameters
 
                 # Successful response provides a "longtask" status link
                 # (add additional code here later to check and/or wait for the status)

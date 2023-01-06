@@ -59,12 +59,12 @@ function Get-ConfluenceUser {
         switch -regex ($PsCmdlet.ParameterSetName) {
             "byKey" {
                 $iwParameters["Uri"] = $resourceApi -f "key=$UserKey"
-                Invoke-Method @iwParameters
+                Invoke-ConfluenceMehtod @iwParameters
                 break
             }
             "byName" {
                 $iwParameters["Uri"] = $resourceApi -f "username=$UserName"
-                Invoke-Method @iwParameters
+                Invoke-ConfluenceMehtod @iwParameters
                 break
             }
         }

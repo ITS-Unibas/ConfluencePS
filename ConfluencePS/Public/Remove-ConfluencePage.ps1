@@ -50,7 +50,7 @@ function Remove-ConfluencePage {
             $iwParameters["Uri"] = $resourceApi -f $_page
 
             If ($PSCmdlet.ShouldProcess("PageID $_page")) {
-                Invoke-Method @iwParameters
+                Invoke-ConfluenceMehtod @iwParameters
             }
         }
     }

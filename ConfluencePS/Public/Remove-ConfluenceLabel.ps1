@@ -65,7 +65,7 @@ function Remove-ConfluenceLabel {
                 $iwParameters["Uri"] = $resourceApi -f $_page, $_label
 
                 if ($PSCmdlet.ShouldProcess("Label $_label, PageID $_page")) {
-                    Invoke-Method @iwParameters
+                    Invoke-ConfluenceMehtod @iwParameters
                 }
             }
         }

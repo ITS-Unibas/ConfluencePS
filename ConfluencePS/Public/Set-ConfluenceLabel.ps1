@@ -67,7 +67,7 @@ function Set-ConfluenceLabel {
             Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($iwParameters["Body"] | Out-String)"
             if ($PSCmdlet.ShouldProcess("Label $Label, PageID $_page")) {
                 $output = [ConfluencePS.ContentLabelSet]@{ Page = $InputObject }
-                $output.Labels += (Invoke-Method @iwParameters)
+                $output.Labels += (Invoke-ConfluenceMehtod @iwParameters)
                 $output
             }
         }

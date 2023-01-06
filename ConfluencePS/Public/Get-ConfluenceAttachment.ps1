@@ -69,7 +69,7 @@ function Get-ConfluenceAttachment {
         foreach ($_PageID in $PageID) {
             $iwParameters['Uri'] = "$ApiUri/content/{0}/child/attachment" -f $_PageID
 
-            Invoke-Method @iwParameters
+            Invoke-ConfluenceMehtod @iwParameters
         }
     }
 

@@ -52,12 +52,12 @@ function Get-ConfluenceSpace {
             foreach ($_space in $SpaceKey) {
                 $iwParameters["Uri"] = $resourceApi -f "/$_space"
 
-                Invoke-Method @iwParameters
+                Invoke-ConfluenceMehtod @iwParameters
             }
         } else {
             $iwParameters["Uri"] = $resourceApi -f ""
 
-            Invoke-Method @iwParameters
+            Invoke-ConfluenceMehtod @iwParameters
         }
     }
 

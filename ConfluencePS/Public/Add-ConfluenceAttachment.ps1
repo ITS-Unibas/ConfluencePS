@@ -66,7 +66,7 @@ function Add-ConfluenceAttachment {
 
             Write-Debug "[$($MyInvocation.MyCommand.Name)] Invoking Add Attachment Method with `$parameter"
             if ($PSCmdlet.ShouldProcess($PageID, "Adding attachment(s) '$($file)'.")) {
-                Invoke-Method @iwParameters
+                Invoke-ConfluenceMehtod @iwParameters
             }
         }
     }

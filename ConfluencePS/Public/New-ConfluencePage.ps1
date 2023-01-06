@@ -55,7 +55,7 @@ function New-ConfluencePage {
 
         $resourceApi = "$ApiUri/content"
 
-        #this is the splat hashtable that passes the auth and uri to calls but not Invoke-Method, i.e. Get-Page
+        #this is the splat hashtable that passes the auth and uri to calls but not Invoke-ConfluenceMehtod, i.e. Get-Page
         $authAndApiUri = Copy-CommonParameter -InputObject $PSBoundParameters -AdditionalParameter "ApiUri"
     }
 
@@ -121,7 +121,7 @@ function New-ConfluencePage {
 
         Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($Content | Out-String)"
         If ($PSCmdlet.ShouldProcess("Space $($Content.space.key)")) {
-            Invoke-Method @iwParameters
+            Invoke-ConfluenceMehtod @iwParameters
         }
     }
 

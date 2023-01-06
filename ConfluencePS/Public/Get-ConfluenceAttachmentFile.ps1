@@ -61,7 +61,7 @@ function Get-ConfluenceAttachmentFile {
             $iwParameters['Headers'] = @{"Accept" = $_Attachment.MediaType }
             $iwParameters['OutFile'] = if ($Path) { Join-Path -Path $Path -ChildPath $_Attachment.Filename } else { $_Attachment.Filename }
 
-            $result = Invoke-Method @iwParameters
+            $result = Invoke-ConfluenceMehtod @iwParameters
             (-not $result)
         }
     }

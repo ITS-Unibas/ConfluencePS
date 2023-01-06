@@ -41,7 +41,7 @@ function Remove-ConfluenceAttachment {
             $iwParameters["Uri"] = $resourceApi -f $_attachment.ID
 
             if ($PSCmdlet.ShouldProcess("Attachment $($_attachment.ID), PageID $($_attachment.PageID)")) {
-                Invoke-Method @iwParameters
+                Invoke-ConfluenceMehtod @iwParameters
             }
         }
     }
