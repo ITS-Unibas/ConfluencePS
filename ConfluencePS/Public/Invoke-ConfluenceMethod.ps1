@@ -94,9 +94,6 @@ function Invoke-ConfluenceMehtod {
         if ($GetParameters -and ($Uri.Query -eq "")) {
             Write-Debug "[$($MyInvocation.MyCommand.Name)] Using `$GetParameters: $($GetParameters | Out-String)"
             $splatParameters['Uri'] = [uri]"$Uri$(ConvertTo-GetParameter $GetParameters)"
-
-            $splatParameters['Uri']
-
             # Prevent recursive appends
             $PSBoundParameters.Remove('GetParameters') | Out-Null
             $GetParameters = $null
