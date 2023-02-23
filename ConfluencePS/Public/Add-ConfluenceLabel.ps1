@@ -88,11 +88,13 @@ function Add-ConfluenceLabel {
         foreach ($_page in $PageID) {
             if ($_ -is [ConfluencePS.Page]) {
                 $InputObject = $_
-            } elseif ($_ -is [ConfluencePS.ContentLabelSet]) {
+            }
+            elseif ($_ -is [ConfluencePS.ContentLabelSet]) {
                 $InputObject = $_.Page
-            } else {
+            }
+            else {
                 $authAndApiUri = Copy-CommonParameter -InputObject $PSBoundParameters -AdditionalParameter "ApiUri"
-                $InputObject = Get-Page -PageID $_page @authAndApiUri
+                $InputObject = Get-ConfluencePage -PageID $_page @authAndApiUri
             }
 
             $iwParameters["Uri"] = $resourceApi -f $_page

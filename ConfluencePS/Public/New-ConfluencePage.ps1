@@ -99,7 +99,7 @@ function New-ConfluencePage {
 
                 if (($ParentID) -and !($SpaceKey)) {
                     Write-Verbose "[$($MyInvocation.MyCommand.Name)] SpaceKey not specified. Retrieving from Get-ConfluencePage -PageID $ParentID"
-                    $SpaceKey = (Get-Page -PageID $ParentID @authAndApiUri).Space.Key
+                    $SpaceKey = (Get-ConfluencePage -PageID $ParentID @authAndApiUri).Space.Key
                 }
 
                 # If -Convert is flagged, call ConvertTo-ConfluenceStorageFormat against the -Body

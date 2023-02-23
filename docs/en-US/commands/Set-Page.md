@@ -162,7 +162,7 @@ Accept wildcard characters: False
 ### -Title
 
 Name of the page; existing or new value can be used.
-Existing will be automatically supplied via Get-Page if not manually included.
+Existing will be automatically supplied via Get-ConfluencePage if not manually included.
 
 ```yaml
 Type: String

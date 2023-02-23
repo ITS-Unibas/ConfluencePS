@@ -99,7 +99,7 @@ function Set-ConfluencePage {
             }
             "byParameters" {
                 $iwParameters["Uri"] = $resourceApi -f $PageID
-                $originalPage = Get-Page -PageID $PageID @authAndApiUri
+                $originalPage = Get-ConfluencePage -PageID $PageID @authAndApiUri
 
                 if (($Parent -is [ConfluencePS.Page]) -and ($Parent.ID)) {
                     $ParentID = $Parent.ID
@@ -111,7 +111,8 @@ function Set-ConfluencePage {
                 # $Body might be empty
                 if ($PSBoundParameters.Keys -contains "Body") {
                     $Content.body.storage.value = $Body
-                } else {
+                }
+                else {
                     $Content.body.storage.value = $originalPage.Body
                 }
                 # Ancestors is undocumented! May break in the future

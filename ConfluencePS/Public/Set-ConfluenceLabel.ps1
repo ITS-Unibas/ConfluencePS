@@ -54,8 +54,9 @@ function Set-ConfluenceLabel {
         foreach ($_page in $PageID) {
             if ($_ -is [ConfluencePS.Page]) {
                 $InputObject = $_
-            } else {
-                $InputObject = Get-Page -PageID $_page @authAndApiUri
+            }
+            else {
+                $InputObject = Get-ConfluencePage -PageID $_page @authAndApiUri
             }
 
             Write-Verbose "[$($MyInvocation.MyCommand.Name)] Removing all previous labels"
