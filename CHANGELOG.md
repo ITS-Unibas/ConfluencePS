@@ -5,21 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.3] 2024-10-23
+
+### Added
+
+- Function ```Get-ConfluencePageProperty```
+
+## [3.0.2] 2023-02-23
+
+### Changed
+
+- Use proper function prefices
+
 ## [3.0.1] 2023-01-06
 
 ### Added
 
-- Function 'Get-ConfluenceUser'
+- Function ```Get-ConfluenceUser```
 
 ### Changed
 
 - Renamed all functions to {Verb}-Confluence{Noun}
 - Introduced 'Uni' prefix
-- Function 'ConvertTo-ConfluenceTable': Improved pipe char handling for vertical tables
+- Function ```ConvertTo-ConfluenceTable```: Improved pipe char handling for vertical tables
 
 ### Fixed
 
-- Function 'Get-ConfluencePage': Improved URL handling for API requests 'ByLabel'
+- Function ```Get-ConfluencePage```: Improved URL handling for API requests ```ByLabel```
 
 ### Changed
 
