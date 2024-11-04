@@ -20,7 +20,11 @@ function Get-ConfluencePageProperty {
             ValueFromPipelineByPropertyName = $true
         )]
         [string[]]
-        $Body
+        $Body,
+
+        [Parameter()]
+        [string[]]
+        $FilterById
     )
 
     BEGIN {
@@ -31,8 +35,24 @@ function Get-ConfluencePageProperty {
         foreach ($Content in $Body) {
             Write-Debug "[$($MyInvocation.MyCommand.Name)] ParameterSetName: $($PsCmdlet.ParameterSetName)"
             Write-Debug "[$($MyInvocation.MyCommand.Name)] PSBoundParameters: $($PSBoundParameters | Out-String)"
-            # Match all table bodies (<tbody>) on the page that are withtin the strucutured macro 'details'
-            $TableBody = foreach ($Match in [regex]::Matches($Content, '\<ac:structured-macro ac:name="details(.*?)<tbody.*?\>(?<TableBody>.*?)\</tbody\>', [System.Text.RegularExpressions.RegexOptions]::SingleLine)) {
+
+            # Extract page properties
+            $PageProperties = foreach ($Match in [regex]::Matches($Content, '\<ac:structured-macro ac:name="details(?s)(.*?)\</ac:structured-macro>')) {
+
+                $Match.Value
+            }
+
+            # Optionally filter by page property id
+            if ($FilterById) {
+                $PatternArray = foreach ($Filter in $FilterById) {
+                    '\<ac:parameter ac:name="id"\>{0}\</ac:parameter\>' -f $Filter
+                }
+                $Pattern = $PatternArray -join '|'
+                $PageProperties = $PageProperties | Where-Object { $_ -match $Pattern }
+            }
+
+            # Extract table body
+            $TableBody = foreach ($Match in [regex]::Matches($PageProperties, '\<tbody.*?\>(?<TableBody>(?s).*?)\</tbody\>')) {
                 $Match.Groups['TableBody'].Value
             }
 
@@ -41,7 +61,7 @@ function Get-ConfluencePageProperty {
             $CurrentObject = [PSCustomObject]@{}
             foreach ($Row in $TableRows) {
                 $Match = [regex]::Match($Row, '\<th.*?\>(?<PropertyName>.*?)\</th\>(?s)(.*?)\<td.*?\>(?s)(?<PropertyValue>.*?)\</td\>')
-                $Name = $Match.Groups['PropertyName'].Value
+                $Name = $Match.Groups['PropertyName'].Value -Replace '\<.*?\>', ''
                 $Value = $Match.Groups['PropertyValue'].Value
 
                 switch -Regex ($Value) {
@@ -49,6 +69,10 @@ function Get-ConfluencePageProperty {
                         $Value = ($Value -split '<br />') | ForEach-Object {
                             $_ -replace '<.*?>', ''
                         }
+                    }
+
+                    'ac:link' {
+                        $Value = [regex]::Match($Value, '\<ac:link.*?\>.*?ri:content-title=\"(?<LinkTitle>.*?)\".*?</ac:link\>').Groups['LinkTitle'].Value
                     }
 
                     'ac:placeholder' {
