@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.4] 2024-11-04
+
+### Changed
+
+- Function ```Get-ConfluencePageProperty```: Improved parsing
+
 ## [3.0.3] 2024-10-23
 
 ### Added
