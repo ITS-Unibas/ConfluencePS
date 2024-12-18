@@ -37,8 +37,13 @@ function Get-ConfluencePageProperty {
             Write-Debug "[$($MyInvocation.MyCommand.Name)] PSBoundParameters: $($PSBoundParameters | Out-String)"
 
             # Extract page properties
-            $PageProperties = foreach ($Match in [regex]::Matches($Content, '\<ac:structured-macro ac:name="details(?s)(.*?)\</ac:structured-macro>')) {
-
+            $PagePropertyPattern = '\<ac:structured-macro ac:name="details(?s)(.*?)\</ac:structured-macro>'
+            $PagePropertyMatches = [regex]::Matches($Content, $PagePropertyPattern)
+            if (-not $PagePropertyMatches) {
+                Write-Error ("No matches found for pattern '{0}' for page body content '{1}'" -f $PagePropertyPattern, $Content)
+                throw $_
+            }
+            $PageProperties = foreach ($Match in $PagePropertyMatches) {
                 $Match.Value
             }
 
@@ -52,12 +57,22 @@ function Get-ConfluencePageProperty {
             }
 
             # Extract table body
-            $TableBody = foreach ($Match in [regex]::Matches($PageProperties, '\<tbody.*?\>(?<TableBody>(?s).*?)\</tbody\>')) {
+            $TableBodyPattern = '\<tbody.*?\>(?<TableBody>(?s).*?)\</tbody\>'
+            $TableBodyMatches = [regex]::Matches($PageProperties, $TableBodyPattern)
+            if (-not $TableBodyMatches) {
+                Write-Error ("No matches found for pattern '{0}' for page property content '{1}'" -f $TableBodyPattern, $PageProperties)
+                throw $_
+            }
+            $TableBody = foreach ($Match in $TableBodyMatches) {
                 $Match.Groups['TableBody'].Value
             }
 
             # Only match the table rows
-            $TableRows = [regex]::Matches($TableBody, '\<tr.*?\>(.*?)\</tr\>', [System.Text.RegularExpressions.RegexOptions]::Singleline).ForEach({ $_.Groups[1].Value })
+            $TableRows = foreach ($Match in [regex]::Matches($TableBody, '\<tr.*?\>(?<TableRows>(?s).*?)\</tr\>')) {
+                $Match.Groups['TableRows'].Value
+            }
+
+            # $TableRows = [regex]::Matches($TableBody, '\<tr.*?\>(.*?)\</tr\>', [System.Text.RegularExpressions.RegexOptions]::Singleline).ForEach({ $_.Groups[1].Value })
             $CurrentObject = [PSCustomObject]@{}
             foreach ($Row in $TableRows) {
                 $Match = [regex]::Match($Row, '\<th.*?\>(?<PropertyName>.*?)\</th\>(?s)(.*?)\<td.*?\>(?s)(?<PropertyValue>.*?)\</td\>')
