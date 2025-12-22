@@ -79,7 +79,7 @@ function New-ConfluenceSpace {
 
         Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($Body | Out-String)"
         If ($PSCmdlet.ShouldProcess("$SpaceKey $Name")) {
-            Invoke-ConfluenceMehtod @iwParameters
+            Invoke-ConfluenceMethod @iwParameters
         }
     }
 

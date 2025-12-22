@@ -108,7 +108,7 @@ function Get-ConfluencePage {
                 foreach ($_pageID in $PageID) {
                     $iwParameters["Uri"] = $resourceApi -f "/$_pageID"
 
-                    Invoke-ConfluenceMehtod @iwParameters
+                    Invoke-ConfluenceMethod @iwParameters
                 }
                 break
             }
@@ -119,9 +119,9 @@ function Get-ConfluencePage {
                 if ($SpaceKey) { $iwParameters["GetParameters"]["spaceKey"] = $SpaceKey }
 
                 if ($Title) {
-                    Invoke-ConfluenceMehtod @iwParameters | Where-Object { $_.Title -like "$Title" }
+                    Invoke-ConfluenceMethod @iwParameters | Where-Object { $_.Title -like "$Title" }
                 } else {
-                    Invoke-ConfluenceMehtod @iwParameters
+                    Invoke-ConfluenceMethod @iwParameters
                 }
                 break
             }
@@ -134,7 +134,7 @@ function Get-ConfluencePage {
 
                 $iwParameters["GetParameters"]["cql"] = $cqlQuery
 
-                Invoke-ConfluenceMehtod @iwParameters
+                Invoke-ConfluenceMethod @iwParameters
                 break
             }
             "byQuery" {
@@ -143,7 +143,7 @@ function Get-ConfluencePage {
                 $cqlQuery = ConvertTo-URLEncoded $Query
                 $iwParameters["GetParameters"]["cql"] = "type=page AND $cqlQuery"
 
-                Invoke-ConfluenceMehtod @iwParameters
+                Invoke-ConfluenceMethod @iwParameters
             }
         }
     }

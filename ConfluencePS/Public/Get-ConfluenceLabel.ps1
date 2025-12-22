@@ -68,7 +68,7 @@ function Get-ConfluenceLabel {
             $iwParameters["Uri"] = $resourceApi -f $_page
             $output = New-Object -TypeName ConfluencePS.ContentLabelSet
             $output.Page = $InputObject
-            $output.Labels += (Invoke-ConfluenceMehtod @iwParameters)
+            $output.Labels += (Invoke-ConfluenceMethod @iwParameters)
             $output
         }
     }

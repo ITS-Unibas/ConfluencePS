@@ -127,7 +127,7 @@ function Set-ConfluencePage {
 
         Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($Content | Out-String)"
         If ($PSCmdlet.ShouldProcess("Page $($Content.title)")) {
-            Invoke-ConfluenceMehtod @iwParameters
+            Invoke-ConfluenceMethod @iwParameters
         }
     }
 

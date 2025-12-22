@@ -1,4 +1,4 @@
-function Invoke-ConfluenceMehtod {
+function Invoke-ConfluenceMethod {
     [CmdletBinding(SupportsPaging = $true)]
     [OutputType(
         [PSObject],
@@ -108,7 +108,8 @@ function Invoke-ConfluenceMehtod {
         if ($Body) {
             if ($RawBody) {
                 $splatParameters["Body"] = $Body
-            } else {
+            }
+            else {
                 # Encode Body to preserve special chars
                 # http://stackoverflow.com/questions/15290185/invoke-webrequest-issue-with-special-characters-in-json
                 $splatParameters["Body"] = [System.Text.Encoding]::UTF8.GetBytes($Body)
@@ -120,13 +121,15 @@ function Invoke-ConfluenceMehtod {
         Write-Verbose "[$($MyInvocation.MyCommand.Name)] Invoke-WebRequest with: $(([PSCustomObject]$splatParameters) | Out-String)"
         try {
             $webResponse = Invoke-WebRequest @splatParameters
-        } catch {
+        }
+        catch {
             Write-Verbose "[$($MyInvocation.MyCommand.Name)] Failed to get an answer from the server"
             $webResponse = $_
             if ($webResponse.ErrorDetails) {
                 # In PowerShellCore (v6+), the response body is available as string
                 $responseBody = $webResponse.ErrorDetails.Message
-            } else {
+            }
+            else {
                 $webResponse = $webResponse.Exception.Response
             }
         }
@@ -167,16 +170,19 @@ function Invoke-ConfluenceMehtod {
                     $responseObject = ConvertFrom-Json -InputObject $responseBody -ErrorAction Stop
                     if ($responseObject.message) {
                         $errorItem.ErrorDetails = $responseObject.message
-                    } else {
+                    }
+                    else {
                         $errorItem.ErrorDetails = "An unknown error ocurred."
                     }
 
-                } catch {
+                }
+                catch {
                     $errorItem.ErrorDetails = "An unknown error ocurred."
                 }
 
                 $Caller.WriteError($errorItem)
-            } else {
+            }
+            else {
                 if ($webResponse.Content) {
                     try {
                         # API returned a Content: lets work with it
@@ -187,7 +193,8 @@ function Invoke-ConfluenceMehtod {
                             # This could be handled nicely in an function such as:
                             # ResolveError $response -WriteError
                             Write-Error $($response.errors | Out-String)
-                        } else {
+                        }
+                        else {
                             if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
                                 [double]$Accuracy = 0.0
                                 $PSCmdlet.PagingParameters.NewTotalCount($response.size, $Accuracy)
@@ -202,7 +209,8 @@ function Invoke-ConfluenceMehtod {
                                 Write-Verbose "[$($MyInvocation.MyCommand.Name)] Outputting results as $($OutputType.FullName)"
                                 $converter = "ConvertTo-$($OutputType.Name)"
                                 $result | & $converter
-                            } else {
+                            }
+                            else {
                                 $result
                             }
 
@@ -219,19 +227,22 @@ function Invoke-ConfluenceMehtod {
 
                                 Write-Verbose "NEXT PAGE: $($parameters["Uri"])"
 
-                                Invoke-ConfluenceMehtod @parameters
+                                Invoke-ConfluenceMethod @parameters
                             }
                         }
-                    } catch {
+                    }
+                    catch {
                         throw $_
                     }
-                } else {
+                }
+                else {
                     # No content, although statusCode < 400
                     # This could be wanted behavior of the API
                     Write-Verbose "[$($MyInvocation.MyCommand.Name)] No content was returned from."
                 }
             }
-        } else {
+        }
+        else {
             Write-Verbose "[$($MyInvocation.MyCommand.Name)] No Web result object was returned from. This is unusual!"
         }
     }

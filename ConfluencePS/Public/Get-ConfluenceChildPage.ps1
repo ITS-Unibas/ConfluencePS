@@ -66,7 +66,7 @@ function Get-ConfluenceChildPage {
             $iwParameters[$_] = $PSCmdlet.PagingParameters.$_
         }
 
-        Invoke-ConfluenceMehtod @iwParameters
+        Invoke-ConfluenceMethod @iwParameters
     }
 
     END {
