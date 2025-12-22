@@ -19,108 +19,104 @@ function Get-ConfluencePageProperty {
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true
         )]
-        [string[]]
-        $Body,
-
-        [Parameter()]
-        [string[]]
-        $FilterById
+        [Object]
+        $Page
     )
 
     BEGIN {
         Write-Verbose "[$($MyInvocation.MyCommand.Name)] Function started"
+
+        function Resolve-XmlContent {
+            <#
+            .DESCRIPTION
+                Resolves the content of an XML node, handling various child node types.
+            #>
+            param (
+                $Node
+            )
+
+            if ($Node -is [String]) {
+                return $Node
+
+            }
+            elseif ($Node -is [System.Xml.XmlLinkedNode]) {
+                # <p>
+                if ($Node.ChildNodes.Name -eq 'p') {
+                    Resolve-XmlContent $Node.'p'
+                }
+                # <div>
+                elseif ($Node.ChildNodes.Name -eq 'div') {
+                    Resolve-XmlContent $Node.'div'
+                }
+                # <br>
+                elseif ($Node.ChildNodes.Name -contains 'br') {
+                    return $Node.ChildNodes.'#text'.Where({ -not ([string]::IsNullOrEmpty($_)) }) -join ";"
+                }
+                # <ul>
+                elseif ($Node.ChildNodes.Name -eq 'ul') {
+                    return $Node.ul.li.Where({ -not ([string]::IsNullOrEmpty($_)) }) -join ";"
+                }
+                # macro 'status'
+                elseif ($Node.ChildNodes.Name -eq 'status') {
+                    ($Node.'structured-macro'.parameter | Where-Object { $_.name -eq 'title' }).'#text'.ToUpper()
+                }
+                # ignore: macro 'children' and 'placeholder'
+                elseif ($Node.ChildNodes.Name -match 'children|placeholder') {
+                    Write-Verbose "'Children Display' macros cannot be parsed!"
+                    return 'CONTENT_NOT_PARSABLE'
+                }
+                else {
+                    return $Node.InnerText
+                }
+            }
+
+        }
     }
 
     PROCESS {
-        foreach ($Content in $Body) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] ParameterSetName: $($PsCmdlet.ParameterSetName)"
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] PSBoundParameters: $($PSBoundParameters | Out-String)"
-
-            # Extract page properties
-            $PagePropertyPattern = '\<ac:structured-macro ac:name="details(?s)(.*?)\</ac:structured-macro>'
-            $PagePropertyMatches = [regex]::Matches($Content, $PagePropertyPattern)
-            if (-not $PagePropertyMatches) {
-                Write-Error ("No matches found for pattern '{0}' for page body content '{1}'" -f $PagePropertyPattern, $Content)
-                throw $_
-            }
-            $PageProperties = foreach ($Match in $PagePropertyMatches) {
-                $Match.Value
+        foreach ($P in $Page) {
+            $Xml = [xml]$('<root xmlns:ac="http://atlassian.com/content" xmlns:ri="http://atlassian.com/resource/identifier" xmlns:at="http://atlassian.com/template">' + $P.Body + '</root>')
+            $Ns = @{
+                ac = "http://atlassian.com/content"
+                ri = "http://atlassian.com/resource/identifier"
+                at = "http://atlassian.com/template"
             }
 
-            # Optionally filter by page property id
-            if ($FilterById) {
-                $PatternArray = foreach ($Filter in $FilterById) {
-                    '\<ac:parameter ac:name="id"\>{0}\</ac:parameter\>' -f $Filter
-                }
-                $Pattern = $PatternArray -join '|'
-                $PageProperties = $PageProperties | Where-Object { $_ -match $Pattern }
-            }
+            $PagePropertyMacro = Select-Xml -Xml $Xml -XPath "//ac:structured-macro[@ac:name='details']" -Namespace $ns | Select-Object -ExpandProperty Node
 
-            # Extract table body
-            $TableBodyPattern = '\<tbody.*?\>(?<TableBody>(?s).*?)\</tbody\>'
-            $TableBodyMatches = [regex]::Matches($PageProperties, $TableBodyPattern)
-            if (-not $TableBodyMatches) {
-                Write-Error ("No matches found for pattern '{0}' for page property content '{1}'" -f $TableBodyPattern, $PageProperties)
-                throw $_
-            }
-            $TableBody = foreach ($Match in $TableBodyMatches) {
-                $Match.Groups['TableBody'].Value
-            }
+            $PageProperties = foreach ($Element in $PagePropertyMacro) {
+                $PagePropertyMacroId = ($Element.parameter | Where-Object { $_.name -eq 'id' })."#text"
 
-            # Only match the table rows
-            $TableRows = foreach ($Match in [regex]::Matches($TableBody, '\<tr.*?\>(?<TableRows>(?s).*?)\</tr\>')) {
-                $Match.Groups['TableRows'].Value
-            }
+                $TableRows = $Element.'rich-text-body'.table.tbody.tr
+                foreach ($Row in $TableRows) {
 
-            # $TableRows = [regex]::Matches($TableBody, '\<tr.*?\>(.*?)\</tr\>', [System.Text.RegularExpressions.RegexOptions]::Singleline).ForEach({ $_.Groups[1].Value })
-            $CurrentObject = [PSCustomObject]@{}
-            foreach ($Row in $TableRows) {
-                $Match = [regex]::Match($Row, '\<th.*?\>(?<PropertyName>.*?)\</th\>(?s)(.*?)\<td.*?\>(?s)(?<PropertyValue>.*?)\</td\>')
-                $Name = $Match.Groups['PropertyName'].Value -Replace '\<.*?\>', ''
-                $Value = $Match.Groups['PropertyValue'].Value
-
-                switch -Regex ($Value) {
-                    '\<br /\>' {
-                        $Value = ($Value -split '<br />') | ForEach-Object {
-                            $_ -replace '<.*?>', ''
-                        }
+                    if ($Row.th -is [System.Xml.XmlLinkedNode]) {
+                        $PropertyName = $Row.th.InnerText
+                    }
+                    elseif ($Row.th -is [String]) {
+                        $PropertyName = $Row.th
+                    }
+                    else {
+                        Write-Warning "Unexpected type for th element: $($Row.th.GetType().FullName)"
+                        continue
                     }
 
-                    'ac:link' {
-                        $Value = [regex]::Match($Value, '\<ac:link.*?\>.*?ri:content-title=\"(?<LinkTitle>.*?)\".*?</ac:link\>').Groups['LinkTitle'].Value
-                    }
+                    $PropertyValue = Resolve-XmlContent $Row.td
 
-                    'ac:placeholder' {
-                        $Value = $null
+                    [PSCustomObject]@{
+                        PagePropertyMacroId = $PagePropertyMacroId
+                        PropertyName        = $PropertyName
+                        PropertyValue       = $PropertyValue
                     }
-
-                    '\<ul\>' {
-                        $ListMatches = [regex]::Matches($Value, '\<li\>(?<ListItem>(?s).*?)\</li\>')
-                        $ListItems = foreach ($ListItem in $ListMatches) {
-                            $ListItem.Groups['ListItem'].Value
-                        }
-                        $Value = $ListItems
-                    }
-
-                    'ac:name="status"' {
-                        $Value = [regex]::Match($Value, '\<ac:parameter ac:name="title"\>(?<MacroValue>.*?)\</ac:parameter\>').Groups['MacroValue'].Value.ToUpper()
-                    }
-
-                    'ac:name="children"' {
-                        Write-Verbose "'Children Display' macros cannot be parsed!"
-                        $SkipIteration = $true # Set a flag to skip the iteration
-                    }
-                    default { $Value = $Value -replace "\<.*?\>" }
                 }
 
-                if ($SkipIteration) {
-                    $SkipIteration = $false # Reset flag
-                    continue # Continue the foreach loop
-                }
-
-                $CurrentObject | Add-Member -NotePropertyName $Name -NotePropertyValue $Value -Force
             }
-            $CurrentObject
+
+            [PSCustomObject]@{
+                Id             = $P.Id
+                Title          = $P.Title
+                PageProperties = $PageProperties | Where-Object { $_.PropertyValue -ne 'CONTENT_NOT_PARSABLE' }
+            }
         }
     }
 
