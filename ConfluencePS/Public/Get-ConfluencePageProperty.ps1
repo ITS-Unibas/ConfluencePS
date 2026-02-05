@@ -41,27 +41,51 @@ function Get-ConfluencePageProperty {
             }
             elseif ($Node -is [System.Xml.XmlLinkedNode]) {
                 # <p>
-                if ($Node.ChildNodes.Name -eq 'p') {
+                if ($Node.FirstChild.Name -eq 'p') {
                     Resolve-XmlContent $Node.'p'
                 }
                 # <div>
-                elseif ($Node.ChildNodes.Name -eq 'div') {
+                elseif ($Node.FirstChild.Name -eq 'div') {
                     Resolve-XmlContent $Node.'div'
                 }
                 # <br>
-                elseif ($Node.ChildNodes.Name -contains 'br') {
-                    return $Node.ChildNodes.'#text'.Where({ -not ([string]::IsNullOrEmpty($_)) }) -join ";"
+                elseif ($Node.FirstChild.Name -contains 'br') {
+                    return $Node.FirstChild.'#text'.Where({ -not ([string]::IsNullOrEmpty($_)) }) -join ";"
                 }
                 # <ul>
-                elseif ($Node.ChildNodes.Name -eq 'ul') {
+                elseif ($Node.FirstChild.Name -eq 'ul') {
                     return $Node.ul.li.Where({ -not ([string]::IsNullOrEmpty($_)) }) -join ";"
                 }
                 # macro 'status'
-                elseif ($Node.ChildNodes.Name -eq 'status') {
-                    ($Node.'structured-macro'.parameter | Where-Object { $_.name -eq 'title' }).'#text'.ToUpper()
+                elseif ($Node.FirstChild.Name -eq 'status') {
+                    return ($Node.'structured-macro'.parameter | Where-Object { $_.name -eq 'title' }).'#text'.ToUpper()
+                }
+                # status-handy
+                elseif ($Node.FirstChild.Name -eq 'status-handy') {
+                    Resolve-XmlContent $Node.'structured-macro'.FirstChild.'#text'
+                }
+                # macro 'link'
+                elseif ($Node.FirstChild.Name -eq 'ac:link') {
+                    $SubTypeName = $Node.'link' |
+                    Get-Member -MemberType Property |
+                    Select-Object -ExpandProperty Name
+
+                    if ($SubTypeName -eq 'page') {
+                        return $Node.'link'.'page'.'content-title'
+                    }
+                    elseif ($SubTypeName -eq 'user') {
+                        $Users = foreach ($UserKey in $Node.'link'.'user'.'userkey') {
+                            Get-UniConfluenceUser -UserKey $UserKey -Credential $Credential -ApiUri $ApiUri
+                        }
+                        return $Users | Select-Object UserName, DisplayName
+                    }
+                    else {
+                        Write-Verbose "Unknown link subtype '$SubTypeName'"
+                        return 'CONTENT_NOT_PARSABLE'
+                    }
                 }
                 # ignore: macro 'children' and 'placeholder'
-                elseif ($Node.ChildNodes.Name -match 'children|placeholder') {
+                elseif ($Node.FirstChild.Name -match 'children|placeholder') {
                     Write-Verbose "'Children Display' macros cannot be parsed!"
                     return 'CONTENT_NOT_PARSABLE'
                 }
