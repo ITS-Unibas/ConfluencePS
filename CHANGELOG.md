@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [3.0.6] 2026-02-05
+## [3.1.0] 2026-05-05
+
+### Changed
+
+- Merged original GitHub project fork and PR-209 from sebmaurer/ConfluencePS
+
+## [3.0.6] 2026-05-05
 
 ### Changed
 
