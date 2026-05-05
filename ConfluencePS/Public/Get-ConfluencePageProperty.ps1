@@ -74,10 +74,7 @@ function Get-ConfluencePageProperty {
                         return $Node.'link'.'page'.'content-title'
                     }
                     elseif ($SubTypeName -eq 'user') {
-                        $Users = foreach ($UserKey in $Node.'link'.'user'.'userkey') {
-                            Get-UniConfluenceUser -UserKey $UserKey -Credential $Credential -ApiUri $ApiUri
-                        }
-                        return $Users | Select-Object UserName, DisplayName
+                        return $Node.'link'.'user'.'userkey'
                     }
                     else {
                         Write-Verbose "Unknown link subtype '$SubTypeName'"
