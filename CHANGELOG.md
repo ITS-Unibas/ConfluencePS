@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.6] 2026-02-05
+
+### Changed
+
+- Function ```Get-ConfluencePageProperty```: The function returns now an object with the page property names and values, and, if provided, the page property IDs
+
 ## [3.0.5] 2024-12-18
 
 ### Changed
