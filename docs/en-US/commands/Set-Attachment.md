@@ -16,7 +16,9 @@ Updates an existing attachment with a new file.
 ## SYNTAX
 
 ```powershell
-Set-Attachment -ApiUri <Uri> -Credential <PSCredential> [-Attachment] <Attachment> -FilePath <String> [-WhatIf] [-Confirm]
+Set-ConfluenceAttachment -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ [-Attachment] <Attachment> -FilePath <String> [-WhatIf] [-Confirm]
 ```
 
 ## DESCRIPTION
@@ -29,7 +31,7 @@ Updates an existing attachment with a new file.
 
 ```powershell
 $attachment = Get-ConfluenceAttachment -PageID 123456 -FileNameFilter test.png
-Set-ConfluenceAttachment -Attachment $attachment -FileName newTest.png -Verbose -Confirm
+Set-ConfluenceAttachment -Attachment $attachment -FilePath newTest.png -Verbose -Confirm
 ```
 
 For the attachment test.png on page with ID 123456, replace the file with the file newTest.png.
@@ -37,7 +39,7 @@ For the attachment test.png on page with ID 123456, replace the file with the fi
 ### -------------------------- EXAMPLE 2 --------------------------
 
 ```powershell
-Get-ConfluenceAttachment -PageID 123456 -FileNameFilter test.png | Set-Attachment -FileName newTest.png -WhatIf
+Get-ConfluenceAttachment -PageID 123456 -FileNameFilter test.png | Set-ConfluenceAttachment -FilePath newTest.png -WhatIf
 ```
 
 Would replace the attachment test.png to the page with ID 123456.
@@ -69,6 +71,23 @@ Value can be set persistently with Set-ConfluenceInfo.
 
 ```yaml
 Type: PSCredential
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PersonalAccessToken
+
+Confluence's Personal Access Token for authentication.
+Value can be set persistently with Set-ConfluenceInfo.
+
+```yaml
+Type: String
 Parameter Sets: (All)
 Aliases:
 

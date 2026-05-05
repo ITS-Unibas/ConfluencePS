@@ -18,36 +18,52 @@ Retrieve a listing of pages in your Confluence instance.
 ### byId (Default)
 
 ```powershell
-Get-ConfluencePage -ApiUri <Uri> -Credential <PSCredential> [-PageID] <Int32[]> [-PageSize <Int32>] [-IncludeTotalCount] [-Skip <UInt64>] [-First <UInt64>]
+Get-ConfluencePage -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ [-PageID] <UInt64[]> [-PageSize <UInt32>] [-IncludeTotalCount] [-Skip <UInt64>]
+ [-First <UInt64>] [-ExcludePageBody]
 ```
 
 ### byLabel
 
 ```powershell
-Get-ConfluencePage -ApiUri <Uri> -Credential <PSCredential> [-SpaceKey <String>] [-Space <Space>] -Label <String[]> [-PageSize <Int32>] [-IncludeTotalCount] [-Skip <UInt64>] [-First <UInt64>]
+Get-ConfluencePage -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ [-SpaceKey <String>] [-Space <Space>] -Label <String[]> [-PageSize <UInt32>]
+ [-IncludeTotalCount] [-Skip <UInt64>] [-First <UInt64>] [-ExcludePageBody]
 ```
 
 ### bySpace
 
 ```powershell
-Get-ConfluencePage -ApiUri <Uri> -Credential <PSCredential> -SpaceKey <String> [-Title <String>] [-PageSize <Int32>] [-IncludeTotalCount] [-Skip <UInt64>] [-First <UInt64>]
+Get-ConfluencePage -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ -SpaceKey <String> [-Title <String>] [-PageSize <UInt32>] [-IncludeTotalCount]
+ [-Skip <UInt64>] [-First <UInt64>] [-ExcludePageBody]
 ```
 
 ### byQuery
 
 ```powershell
-Get-ConfluencePage -ApiUri <Uri> -Credential <PSCredential> [-Query <String>] [-PageSize <Int32>] [-IncludeTotalCount] [-Skip <UInt64>] [-First <UInt64>]
+Get-ConfluencePage -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ [-Query] <String> [-PageSize <UInt32>] [-IncludeTotalCount] [-Skip <UInt64>]
+ [-First <UInt64>] [-ExcludePageBody]
 ```
 
 ### bySpaceObject
 
 ```powershell
-Get-ConfluencePage -ApiUri <Uri> -Credential <PSCredential> -Space <Space> [-Title <String>] [-PageSize <Int32>] [-IncludeTotalCount] [-Skip <UInt64>] [-First <UInt64>]
+Get-ConfluencePage -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ -Space <Space> [-Title <String>] [-PageSize <UInt32>] [-IncludeTotalCount]
+ [-Skip <UInt64>] [-First <UInt64>] [-ExcludePageBody]
 ```
 
 ## DESCRIPTION
 
 Return Confluence pages, filtered by ID, Name, or Space.
+Pass the optional parameter -ExcludePageBody to avoid fetching the pages' HTML content.
 
 ## EXAMPLES
 
@@ -96,6 +112,14 @@ Get-ConfluencePage -Query "mention = jSmith and creator != jSmith"
 
 Return all pages matching the query.
 
+### -------------------------- EXAMPLE 5 --------------------------
+
+```powershell
+Get-ConfluencePage -Label 'skywalker' -ExcludePageBody
+```
+
+Return all pages containing the label "skywalker" (case-insensitive) without their page content.
+
 ## PARAMETERS
 
 ### -ApiUri
@@ -132,6 +156,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -PersonalAccessToken
+
+Confluence's Personal Access Token for authentication.
+Value can be set persistently with Set-ConfluenceInfo.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Certificate
 
 Certificate to use for the authentication with the REST Api.
@@ -157,7 +198,7 @@ Filter results by page ID.
 Best option if you already know the ID.
 
 ```yaml
-Type: Int32[]
+Type: UInt64[]
 Parameter Sets: byId
 Aliases: ID
 
@@ -285,7 +326,7 @@ This setting can be tuned to get better performance according to the load on the
 > Warning: too high of a PageSize can cause a timeout on the request.
 
 ```yaml
-Type: Int32
+Type: UInt32
 Parameter Sets: (All)
 Aliases:
 
@@ -348,6 +389,22 @@ Aliases:
 Required: False
 Position: Named
 Default value: 18446744073709551615
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ExcludePageBody
+
+Avoids fetching pages' body
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

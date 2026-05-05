@@ -6,6 +6,11 @@ function Invoke-WebRequest {
         "",
         Justification = "Converting received plaintext token to SecureString"
     )]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        "PSAvoidOverwritingBuiltInCmdlets",
+        "",
+        Justification = "Function for internal use"
+    )]
     param(
         [switch]
         ${UseBasicParsing},
@@ -25,6 +30,9 @@ function Invoke-WebRequest {
         [pscredential]
         [System.Management.Automation.CredentialAttribute()]
         ${Credential},
+
+        [string]
+        ${PersonalAccessToken},
 
         [switch]
         ${UseDefaultCredentials},
@@ -96,6 +104,11 @@ function Invoke-WebRequest {
             $null = $PSBoundParameters.Remove("Credential")
         }
 
+        if ($PersonalAccessToken) {
+            $PSBoundParameters["Headers"]["Authorization"] = "Bearer $PersonalAccessToken"
+            $null = $PSBoundParameters.Remove("PersonalAccessToken")
+        }
+
         if ($InFile) {
             $boundary = [System.Guid]::NewGuid().ToString()
             $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")
@@ -161,6 +174,11 @@ if ($PSVersionTable.PSVersion.Major -ge 6) {
     function Invoke-WebRequest {
         #require -Version 6
         [CmdletBinding(DefaultParameterSetName = 'StandardMethod', HelpUri = 'https://go.microsoft.com/fwlink/?LinkID=217035')]
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+            "PSAvoidOverwritingBuiltInCmdlets",
+            "",
+            Justification = "Function for internal use"
+        )]
         param(
             [switch]
             ${UseBasicParsing},
@@ -286,6 +304,8 @@ if ($PSVersionTable.PSVersion.Major -ge 6) {
         begin {
             if ($Credential -and (-not ($Authentication))) {
                 $PSBoundParameters["Authentication"] = "Basic"
+            } elseif ($PersonalAccessToken -and (-not ($Authentication))) {
+                $PSBoundParameters["Authentication"] = "Bearer"
             }
             if ($InFile) {
                 $multipartContent = [System.Net.Http.MultipartFormDataContent]::new()

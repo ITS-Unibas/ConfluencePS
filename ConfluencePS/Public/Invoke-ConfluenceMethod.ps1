@@ -12,8 +12,11 @@ function Invoke-ConfluenceMethod {
     )]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute( "PSAvoidUsingEmptyCatchBlock", "" )]
     param (
-        [Parameter(Mandatory = $true)]
-        [uri]$Uri,
+        [Parameter(
+            Position = 0,
+            Mandatory = $true
+        )]
+        [Uri]$Uri,
 
         [Microsoft.PowerShell.Commands.WebRequestMethod]$Method = "GET",
 
@@ -43,6 +46,10 @@ function Invoke-ConfluenceMethod {
 
         [Parameter( Mandatory = $false )]
         [PSCredential]$Credential,
+
+        [Parameter( Mandatory = $false )]
+        [String]
+        $PersonalAccessToken,
 
         [Parameter( Mandatory = $false )]
         [ValidateNotNull()]

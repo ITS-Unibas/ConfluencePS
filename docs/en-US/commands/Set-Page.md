@@ -18,13 +18,18 @@ Edit an existing Confluence page.
 ### byParameters (Default)
 
 ```powershell
-Set-ConfluencePage -ApiUri <Uri> -Credential <PSCredential> -PageID <Int32> [-Title <String>] [-Body <String>] [-Convert] [-ParentID <Int32>] [-Parent <Page>] [-WhatIf] [-Confirm]
+Set-ConfluencePage -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ -PageID <UInt64> [-Title <String>] [-Body <String>] [-Convert]
+ [-ParentID <UInt64>] [-Parent <Page>] [-WhatIf] [-Confirm]
 ```
 
 ### byObject
 
 ```powershell
-Set-ConfluencePage -ApiUri <Uri> -Credential <PSCredential> -InputObject <Page> [-WhatIf] [-Confirm]
+Set-ConfluencePage -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ -InputObject <Page> [-WhatIf] [-Confirm]
 ```
 
 ## DESCRIPTION
@@ -111,6 +116,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -PersonalAccessToken
+
+Confluence's Personal Access Token for authentication.
+Value can be set persistently with Set-ConfluenceInfo.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Certificate
 
 Certificate for authentication.
@@ -148,7 +170,7 @@ Accept wildcard characters: False
 The ID of the page to edit.
 
 ```yaml
-Type: Int32
+Type: UInt64
 Parameter Sets: byParameters
 Aliases: ID
 
@@ -215,7 +237,7 @@ Optionally define a new parent page.
 If unspecified, no change.
 
 ```yaml
-Type: Int32
+Type: UInt64
 Parameter Sets: byParameters
 Aliases:
 

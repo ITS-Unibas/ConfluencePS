@@ -1,6 +1,6 @@
 #requires -modules BuildHelpers
 #requires -modules Configuration
-#requires -modules Pester
+#requires -modules @{ ModuleName = "Pester"; ModuleVersion = "4.10" }
 
 Describe "Validation of build environment" -Tag Unit {
 
@@ -60,7 +60,7 @@ Describe "Validation of build environment" -Tag Unit {
         }
 
         It "has a version changelog that matches the manifest version" {
-            Configuration\Get-Metadata -Path $env:BHManifestToTest -PropertyName ModuleVersion | Should -BeLike "$changelogVersion*"
+            (Metadata\Import-Metadata -Path $env:BHManifestToTest).ModuleVersion | Should -BeLike "$changelogVersion*"
         }
     }
 }

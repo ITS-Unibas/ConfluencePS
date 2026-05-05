@@ -16,14 +16,18 @@ Retrieve the child pages of a given wiki page or pages.
 ## SYNTAX
 
 ```powershell
-Get-ConfluenceChildPage -ApiUri <Uri> -Credential <PSCredential> [-PageID] <Int32> [-Recurse] [-PageSize <Int32>] [-IncludeTotalCount] [-Skip <UInt64>] [-First <UInt64>]
+Get-ConfluenceChildPage -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ [-PageID] <UInt64> [-Recurse] [-PageSize <UInt64>] [-IncludeTotalCount]
+ [-Skip <UInt64>] [-First <UInt64>] [-ExcludePageBody]
 ```
 
 ## DESCRIPTION
 
 Return all pages directly below the given page(s).
 
-Optionally, the -Recurse parameter will return all child pages, no matter how nested.
+Optionally, the -Recurse parameter will return all child pages, no matter how nested. 
+Pass the optional parameter -ExcludePageBody to avoid fetching the pages' HTML content.
 
 ## EXAMPLES
 
@@ -82,6 +86,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -PersonalAccessToken
+
+Confluence's Personal Access Token for authentication.
+Value can be set persistently with Set-ConfluenceInfo.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Certificate
 
 Certificate for authentication.
@@ -103,7 +124,7 @@ Accept wildcard characters: False
 Filter results by page ID.
 
 ```yaml
-Type: Int32
+Type: UInt64
 Parameter Sets: (All)
 Aliases: ID
 
@@ -139,7 +160,7 @@ This setting can be tuned to get better performance according to the load on the
 > Warning: too high of a PageSize can cause a timeout on the request.
 
 ```yaml
-Type: Int32
+Type: UInt32
 Parameter Sets: (All)
 Aliases:
 
@@ -202,6 +223,22 @@ Aliases:
 Required: False
 Position: Named
 Default value: 18446744073709551615
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ExcludePageBody
+
+Avoids fetching pages' body
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

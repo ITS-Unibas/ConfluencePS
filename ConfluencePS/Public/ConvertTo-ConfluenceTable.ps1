@@ -28,18 +28,21 @@ function ConvertTo-ConfluenceTable {
         # This ForEach needed if the content wasn't piped in
         $Content | ForEach-Object {
             if ($Vertical) {
-                
+                if ($HeaderGenerated) { $pipe = '|' }
+                else { $pipe = '||' }
+
                 # Put an empty row between multiple tables (objects)
                 if ($Spacer) {
                     $null = $sb.AppendLine('')
                 }
-                
-                if ($NoHeader) {     
+
+                if ($NoHeader) {
                     $_.PSObject.Properties | ForEach-Object {
                         $row = ("| {0} | {1} |" -f $_.Name, $_.Value) -replace "\|\s\s", "| "
                         $null = $sb.AppendLine($row)
                     }
-                } else {
+                }
+                else {
                     $_.PSObject.Properties | ForEach-Object {
                         $row = ("|| {0} | {1} |" -f $_.Name, $_.Value) -replace "\|\s\s", "| "
                         $null = $sb.AppendLine($row)
@@ -48,7 +51,8 @@ function ConvertTo-ConfluenceTable {
 
 
                 $Spacer = $true
-            } else {
+            }
+            else {
                 # Horizontal
 
                 # Header row enclosed by '||'

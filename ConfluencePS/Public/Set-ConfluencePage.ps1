@@ -7,10 +7,14 @@ function Set-ConfluencePage {
     [OutputType([ConfluencePS.Page])]
     param (
         [Parameter( Mandatory = $true )]
-        [uri]$ApiUri,
+        [Uri]$ApiUri,
 
         [Parameter( Mandatory = $false )]
         [PSCredential]$Credential,
+
+        [Parameter( Mandatory = $false )]
+        [String]
+        $PersonalAccessToken,
 
         [Parameter( Mandatory = $false )]
         [ValidateNotNull()]
@@ -29,23 +33,23 @@ function Set-ConfluencePage {
             ValueFromPipeline = $true,
             ParameterSetName = 'byParameters'
         )]
-        [ValidateRange(1, [int]::MaxValue)]
+        [ValidateRange(1, [UInt64]::MaxValue)]
         [Alias('ID')]
-        [int]$PageID,
+        [UInt64]$PageID,
 
         [Parameter(ParameterSetName = 'byParameters')]
         [ValidateNotNullOrEmpty()]
-        [string]$Title,
+        [String]$Title,
 
         [Parameter(ParameterSetName = 'byParameters')]
-        [string]$Body,
+        [String]$Body,
 
         [Parameter(ParameterSetName = 'byParameters')]
-        [switch]$Convert,
+        [Switch]$Convert,
 
         [Parameter(ParameterSetName = 'byParameters')]
-        [ValidateRange(1, [int]::MaxValue)]
-        [int]$ParentID,
+        [ValidateRange(1, [UInt64]::MaxValue)]
+        [UInt64]$ParentID,
 
         [Parameter(ParameterSetName = 'byParameters')]
         [ConfluencePS.Page]$Parent

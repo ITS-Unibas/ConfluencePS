@@ -3,10 +3,14 @@ function Get-ConfluenceChildPage {
     [OutputType([ConfluencePS.Page])]
     param (
         [Parameter( Mandatory = $true )]
-        [uri]$ApiUri,
+        [Uri]$ApiUri,
 
         [Parameter( Mandatory = $false )]
         [PSCredential]$Credential,
+
+        [Parameter( Mandatory = $false )]
+        [String]
+        $PersonalAccessToken,
 
         [Parameter( Mandatory = $false )]
         [ValidateNotNull()]
@@ -19,14 +23,16 @@ function Get-ConfluenceChildPage {
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true
         )]
-        [ValidateRange(1, [int]::MaxValue)]
+        [ValidateRange(1, [UInt64]::MaxValue)]
         [Alias('ID')]
-        [int]$PageID,
+        [UInt64]$PageID,
 
-        [switch]$Recurse,
+        [Switch]$Recurse,
 
-        [ValidateRange(1, [int]::MaxValue)]
-        [int]$PageSize = 25
+        [ValidateRange(1, [UInt32]::MaxValue)]
+        [UInt32]$PageSize = 25,
+
+        [Switch]$ExcludePageBody
     )
 
     BEGIN {
@@ -38,7 +44,7 @@ function Get-ConfluenceChildPage {
         Write-Debug "[$($MyInvocation.MyCommand.Name)] PSBoundParameters: $($PSBoundParameters | Out-String)"
 
         #Fix: See fix statement below. These two fix statements are tied together
-        if (($_) -and -not($_ -is [ConfluencePS.Page] -or $_ -is [int])) {
+        if (($_) -and -not($_ -is [ConfluencePS.Page] -or $_ -is [UInt64])) {
             $message = "The Object in the pipe is not a Page."
             $exception = New-Object -TypeName System.ArgumentException -ArgumentList $message
             Throw $exception
@@ -59,6 +65,10 @@ function Get-ConfluenceChildPage {
             expand = "space,version,body.storage,ancestors"
             limit  = $PageSize
         }
+        if ($ExcludePageBody) {
+            $iwParameters.GetParameters.expand = "space,version,ancestors"
+        }
+
         $iwParameters['OutputType'] = [ConfluencePS.Page]
 
         # Paging

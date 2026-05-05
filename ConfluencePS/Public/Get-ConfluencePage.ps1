@@ -6,10 +6,14 @@ function Get-ConfluencePage {
     [OutputType([ConfluencePS.Page])]
     param (
         [Parameter( Mandatory = $true )]
-        [uri]$ApiUri,
+        [Uri]$ApiUri,
 
         [Parameter( Mandatory = $false )]
         [PSCredential]$Credential,
+
+        [Parameter( Mandatory = $false )]
+        [String]
+        $PersonalAccessToken,
 
         [Parameter( Mandatory = $false )]
         [ValidateNotNull()]
@@ -23,9 +27,9 @@ function Get-ConfluencePage {
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true
         )]
-        [ValidateRange(1, [int]::MaxValue)]
+        [ValidateRange(1, [UInt64]::MaxValue)]
         [Alias('ID')]
-        [int[]]$PageID,
+        [UInt64[]]$PageID,
 
         [Parameter(
             ParameterSetName = "bySpace"
@@ -34,7 +38,7 @@ function Get-ConfluencePage {
             ParameterSetName = "bySpaceObject"
         )]
         [Alias('Name')]
-        [string]$Title,
+        [String]$Title,
 
         [Parameter(
             Mandatory = $true,
@@ -44,7 +48,7 @@ function Get-ConfluencePage {
             ParameterSetName = "byLabel"
         )]
         [Alias('Key')]
-        [string]$SpaceKey,
+        [String]$SpaceKey,
 
         [Parameter(
             Mandatory = $true,
@@ -62,17 +66,19 @@ function Get-ConfluencePage {
             Mandatory = $true,
             ParameterSetName = "byLabel"
         )]
-        [string[]]$Label,
+        [String[]]$Label,
 
         [Parameter(
             Position = 0,
             Mandatory = $true,
             ParameterSetName = "byQuery"
         )]
-        [string]$Query,
+        [String]$Query,
 
-        [ValidateRange(1, [int]::MaxValue)]
-        [int]$PageSize = 25
+        [ValidateRange(1, [UInt32]::MaxValue)]
+        [UInt32]$PageSize = 25,
+
+        [Switch]$ExcludePageBody
     )
 
     BEGIN {
@@ -87,6 +93,11 @@ function Get-ConfluencePage {
             expand = "space,version,body.storage,ancestors"
             limit  = $PageSize
         }
+
+        if ($ExcludePageBody) {
+            $iwParameters.GetParameters.expand = "space,version,ancestors"
+        }
+
         $iwParameters['OutputType'] = [ConfluencePS.Page]
     }
 
@@ -120,7 +131,8 @@ function Get-ConfluencePage {
 
                 if ($Title) {
                     Invoke-ConfluenceMethod @iwParameters | Where-Object { $_.Title -like "$Title" }
-                } else {
+                }
+                else {
                     Invoke-ConfluenceMethod @iwParameters
                 }
                 break

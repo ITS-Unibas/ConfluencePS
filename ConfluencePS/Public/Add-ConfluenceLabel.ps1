@@ -6,10 +6,14 @@ function Add-ConfluenceLabel {
     [OutputType([ConfluencePS.ContentLabelSet])]
     param (
         [Parameter( Mandatory = $true )]
-        [uri]$ApiUri,
+        [Uri]$ApiUri,
 
         [Parameter( Mandatory = $false )]
         [PSCredential]$Credential,
+
+        [Parameter( Mandatory = $false )]
+        [String]
+        $PersonalAccessToken,
 
         [Parameter( Mandatory = $false )]
         [ValidateNotNull()]
@@ -21,9 +25,9 @@ function Add-ConfluenceLabel {
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true
         )]
-        [ValidateRange(1, [int]::MaxValue)]
+        [ValidateRange(1, [UInt64]::MaxValue)]
         [Alias('ID')]
-        [int[]]$PageID,
+        [UInt64[]]$PageID,
 
         [Parameter(
             Mandatory = $true,
@@ -45,7 +49,7 @@ function Add-ConfluenceLabel {
         Write-Debug "[$($MyInvocation.MyCommand.Name)] PSBoundParameters: $($PSBoundParameters | Out-String)"
 
         # Validade input object from Pipeline
-        if (($_) -and -not($_ -is [ConfluencePS.Page] -or $_ -is [int] -or $_ -is [ConfluencePS.ContentLabelSet])) {
+        if (($_) -and -not($_ -is [ConfluencePS.Page] -or $_ -is [UInt64] -or $_ -is [ConfluencePS.ContentLabelSet])) {
             $message = "The Object in the pipe is not a Page."
             $exception = New-Object -TypeName System.ArgumentException -ArgumentList $message
             Throw $exception
@@ -98,7 +102,7 @@ function Add-ConfluenceLabel {
             }
 
             $iwParameters["Uri"] = $resourceApi -f $_page
-            $iwParameters["Body"] = ($Label | Foreach-Object { @{prefix = 'global'; name = $_ } }) | ConvertTo-Json
+            $iwParameters["Body"] = ($Label | ForEach-Object { @{prefix = 'global'; name = $_ } }) | ConvertTo-Json
 
             Write-Debug "[$($MyInvocation.MyCommand.Name)] Content to be sent: $($iwParameters["Body"] | Out-String)"
             if ($PSCmdlet.ShouldProcess("Label $Label, PageID $_page")) {

@@ -16,7 +16,9 @@ Add a new global label to an existing Confluence page.
 ## SYNTAX
 
 ```powershell
-Add-ConfluenceLabel -ApiUri <Uri> -Credential <PSCredential> [[-PageID] <Int32[]>] -Label <Object> [-WhatIf] [-Confirm]
+Add-ConfluenceLabel -ApiUri <Uri> [-Credential <PSCredential>]
+ [-PersonalAccessToken <String>] [-Certificate <X509Certificate>]
+ [-PageID]  <UInt64[]> -Label <Object> [-WhatIf] [-Confirm]
 ```
 
 ## DESCRIPTION
@@ -91,6 +93,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -PersonalAccessToken
+
+Confluence's Personal Access Token for authentication.
+Value can be set persistently with Set-ConfluenceInfo.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Certificate
 
 Certificate for authentication.
@@ -113,7 +132,7 @@ The ID of the page to which apply the label to.
 Accepts multiple IDs, including via pipeline input.
 
 ```yaml
-Type: Int32[]
+Type: UInt64[]
 Parameter Sets: (All)
 Aliases: ID
 

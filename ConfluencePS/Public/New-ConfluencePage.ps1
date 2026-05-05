@@ -7,10 +7,14 @@ function New-ConfluencePage {
     [OutputType([ConfluencePS.Page])]
     param (
         [Parameter( Mandatory = $true )]
-        [uri]$ApiUri,
+        [Uri]$ApiUri,
 
         [Parameter( Mandatory = $false )]
         [PSCredential]$Credential,
+
+        [Parameter( Mandatory = $false )]
+        [String]
+        $PersonalAccessToken,
 
         [Parameter( Mandatory = $false )]
         [ValidateNotNull()]
@@ -30,24 +34,26 @@ function New-ConfluencePage {
             ParameterSetName = 'byParameters'
         )]
         [Alias('Name')]
-        [string]$Title,
+        [String]$Title,
 
         [Parameter(ParameterSetName = 'byParameters')]
-        [ValidateRange(1, [int]::MaxValue)]
-        [int]$ParentID,
+        [ValidateRange(1, [UInt64]::MaxValue)]
+        [UInt64]$ParentID,
+
         [Parameter(ParameterSetName = 'byParameters')]
         [ConfluencePS.Page]$Parent,
 
         [Parameter(ParameterSetName = 'byParameters')]
-        [string]$SpaceKey,
+        [String]$SpaceKey,
+
         [Parameter(ParameterSetName = 'byParameters')]
         [ConfluencePS.Space]$Space,
 
         [Parameter(ParameterSetName = 'byParameters')]
-        [string]$Body,
+        [String]$Body,
 
         [Parameter(ParameterSetName = 'byParameters')]
-        [switch]$Convert
+        [Switch]$Convert
     )
 
     BEGIN {
@@ -86,7 +92,7 @@ function New-ConfluencePage {
                 $Content.space.key = $InputObject.Space.Key
                 $Content.body.storage.value = $InputObject.Body
                 if ($InputObject.Ancestors) {
-                    $Content.ancestors += @( $InputObject.Ancestors | Foreach-Object { @{ id = $_.ID } } )
+                    $Content.ancestors += @( $InputObject.Ancestors | ForEach-Object { @{ id = $_.ID } } )
                 }
             }
             "byParameters" {
