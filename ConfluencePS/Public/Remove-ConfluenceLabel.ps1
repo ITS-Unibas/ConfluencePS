@@ -58,7 +58,7 @@ function Remove-ConfluenceLabel {
             if (!$_labels) {
                 Write-Verbose "[$($MyInvocation.MyCommand.Name)] Collecting all Labels for page $_page"
                 $authAndApiUri = Copy-CommonParameter -InputObject $PSBoundParameters -AdditionalParameter "ApiUri"
-                $allLabels = Get-Label -PageID $_page @authAndApiUri
+                $allLabels = Get-ConfluenceLabel -PageID $_page @authAndApiUri
                 if ($allLabels.Labels) {
                     $_labels = $allLabels.Labels | Select-Object -ExpandProperty Name
                 }
