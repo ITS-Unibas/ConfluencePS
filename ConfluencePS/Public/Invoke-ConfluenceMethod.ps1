@@ -195,7 +195,7 @@ function Invoke-ConfluenceMethod {
                         # API returned a Content: lets work with it
                         $response = ConvertFrom-Json ([Text.Encoding]::UTF8.GetString($webResponse.RawContentStream.ToArray()))
 
-                        if ($null -ne $response.errors) {
+                        if (@($response.errors | Where-Object { $null -ne $_ }).Count -gt 0) {
                             Write-Verbose "[$($MyInvocation.MyCommand.Name)] An error response was received from; resolving"
                             # This could be handled nicely in an function such as:
                             # ResolveError $response -WriteError
